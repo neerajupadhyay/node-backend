@@ -12,6 +12,6 @@ app.use(express.json({limit:"16kb"}))
 // used for url data 
 app.use(express.urlencoded({extended:true,limit:"16kb"}))
 // use for image and assets folder
-app.use (express.static("public"))
-use.app(cookieParser())
+app.use(express.static("public"))
+app.use(cookieParser())
 export {app}
