@@ -11,22 +11,22 @@ const registerUser = asyncHandler(async (req,res) => {
         throw new ApiError(400,"All fields required");
         
     }
-    const exitedUser =User.findOne({
+    const exitedUser = await User.findOne({
         $or:[{userName},{email}]
     })
-
     if(exitedUser){
         throw new ApiError(409,"User with email or username already exit ")
     }
 
-    const avtarLocalPath = req.file?.avtar[0]?.path
-    const coverImageLocalPath = req.file?.coverImage[0]?.path
-
+    const avtarLocalPath = req.files?.avtar[0]?.path
+    const coverImageLocalPath = req.files &&  req.files.coverImage ? req.files.coverImage[0].path:""
+   
     if(!avtarLocalPath){
         throw new ApiError(400,"Avtar Image is required ")
     }
  const avtar =await uploadOnCloudinary(avtarLocalPath)
  const coverImage =await uploadOnCloudinary(coverImageLocalPath)
+ 
  if(!avtar){
     throw new ApiError(400,"Avtar Image is required ")
 }
@@ -34,19 +34,22 @@ const registerUser = asyncHandler(async (req,res) => {
         fullName,
         avtar:avtar.url,
         coverImage:coverImage?.url||"",
-        userName:userName.lowerCase(),
+        userName:userName.toLowerCase(),
         email,
         password
     })
-    const createdUser = User.findById(userData._id).select(
+    const createdUser = await User.findById(userData._id).select(
         "-password -refreshToken"
     )
-    if(createdUser){
+    
+    if(!createdUser){
         throw new ApiError(500,"Something went wrong while user registering ")
     }
+
     return res.status(201).json(
-        new ApiResponse(200,createdUser,'registered user successfully')
+        new ApiResponse(200,createdUser, "User registered Successfully")
     )
+ 
 })
 
 export {registerUser}
