@@ -1,4 +1,4 @@
-import {v2 as couldinary} from 'cloudinary'
+import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs'
 
 // Configuration
@@ -8,11 +8,12 @@ cloudinary.config({
     api_secret: process.env.COULDINARY_API_SECRET
 });
 
-const uploadOnCloudinary = async (localFilePath) {
+const uploadOnCloudinary = async (localFilePath) => {
     try {
         if(!localFilePath) return null
         // Upload the file on cloundinary 
-        const response = await cloudinary.uploader.upload(localFilePath,{
+        
+     const response = await cloudinary.uploader.upload(localFilePath,{
             resource_type:'auto'
         })
         // file has been uploaded sucessfully
